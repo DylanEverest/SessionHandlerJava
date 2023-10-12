@@ -1,7 +1,6 @@
 package session;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 import cookie.CookieRetriever;
 import databaseAccess.SessionModel;
@@ -10,7 +9,6 @@ import requestHandler.RequestHolder;
 
 public class SessionHandler {
     private String sessionId;
-    private Map<String, Object> data = new HashMap<>();
     private long lastAccessedTime;
     
     
@@ -67,12 +65,39 @@ public class SessionHandler {
         }
 
     }
-    
 
-    public Object getData(String key)
+    public String getData(String sessionId, String key) throws Exception 
     {
-        return data.get(key);
+        int pk = SessionModel.exists(sessionId, key);
+        if (pk != -1) 
+        {
+            SessionModel session = SessionModel.read(pk);
+         
+            return extractValueFromSessions(session.getSessions(), key);
+        }
+        return null; // Session data not found
     }
+    
+    private String extractValueFromSessions(String sessions, String key) 
+    {
+        if (sessions != null) 
+        {
+            String[] keyValuePairs = sessions.split(",");
+
+            for (String pair : keyValuePairs) 
+            {
+                String[] parts = pair.split("=");
+
+                if (parts.length == 2 && parts[0].equals(key)) 
+                {
+                    return parts[1];
+                }
+            }
+        }
+        return null; 
+    }
+    
+    
     
     public String getSessionId() 
     {

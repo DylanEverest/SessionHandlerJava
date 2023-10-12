@@ -17,11 +17,19 @@ public class RequestFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException 
     {
+
+        /**
+         * For the cookie
+         */
         if (request instanceof HttpServletRequest) 
         {
             RequestHolder.setRequest((HttpServletRequest) request);
             RequestHolder.setResponse((HttpServletResponse) response);
         }
+
+        /*
+         * For the init
+         */
 
         chain.doFilter(request, response);
     }

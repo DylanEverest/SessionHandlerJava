@@ -7,15 +7,13 @@ import databaseAccess.SessionModel;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import requestHandler.RequestHolder;
 
 public class SessionHandler {
-    private String sessionId;
-    private long lastAccessedTime;
+
     
     
-    public void session_start() {
+    public static void session_start() {
         // Check if the session ID exists in the current cookie of the user
 
         String sessionIdFromCookie = CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
@@ -23,7 +21,7 @@ public class SessionHandler {
     
         if (sessionIdFromCookie == null) {
             // Session ID does not exist in the current cookie, generate a new one
-            sessionId = SessionIdGenerator.generateSessionId();
+            String sessionId = SessionIdGenerator.generateSessionId();
             
             // add the cookie for the client
             Cookie sessionCookie = new Cookie("sessionIdDylan", sessionId);
@@ -31,15 +29,11 @@ public class SessionHandler {
             RequestHolder.getResponse().addCookie(sessionCookie);
 
         } 
-        else 
-        {
-            // Session ID exists in the cookie, use it
-            sessionId = sessionIdFromCookie;
-        }
+
     }
     
 
-    public void session_destroy() {
+    public static void session_destroy() {
         // Retrieve the current request
         HttpServletRequest request = RequestHolder.getRequest();
         
@@ -74,8 +68,13 @@ public class SessionHandler {
     
     
     
-    public boolean storeData(String key, Object value) throws Exception
+    public static boolean storeData(String key, Object value) throws Exception
     {
+        String sessionId = CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
+        if (sessionId == null) {
+            session_start();
+            sessionId =CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
+        }
         try 
         {
             String valueToInsert = value.toString();
@@ -102,18 +101,5 @@ public class SessionHandler {
         return SessionModel.read(key).getValue();
     }
     
-    public String getSessionId() 
-    {
-        return sessionId;
-    }
-
-    public long getLastAccessedTime() 
-    {
-        return lastAccessedTime;
-    }
-    public void setLastAccessedTime(long lastAccessedTime) 
-    {
-        this.lastAccessedTime = lastAccessedTime;
-    }
     
 }

@@ -44,7 +44,7 @@ public class SessionHandler {
         HttpServletRequest request = RequestHolder.getRequest();
     
         // Create a session cookie with the same name as the session ID cookie
-        Cookie sessionCookie = new Cookie("sessionId", null);
+        Cookie sessionCookie = new Cookie("sessionIdDylan", null);
         
         // Set the cookie to expire by setting its maxAge to 0 (or a negative value)
         sessionCookie.setMaxAge(0);

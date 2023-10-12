@@ -85,57 +85,27 @@ public class SessionHandler {
         {
             String valueToInsert = value.toString();
             // Check if the record exists
-            int pk = SessionModel.exists(sessionId, key) ;
-            if  (pk!=-1) 
+            
+            if  (!SessionModel.updateSessionData( sessionId ,key, valueToInsert)) 
             {
-                SessionModel.updateSessionData( pk ,key, valueToInsert);
+                SessionModel x =SessionModel.create(sessionId ,key, valueToInsert) ;
+                return (x==null);
             } 
-            else 
-            {
-                SessionModel.create(sessionId, key+"="+valueToInsert) ;
-            }
-            return false;            
-        } catch (Exception e) 
+            return true;
+
+        }
+        catch (Exception e) 
         {
             throw new Exception("Store tsy mety");
         }
 
     }
 
-    public String getData(String sessionId, String key) throws Exception 
+    public String getData(String key) throws Exception 
     {
-        int pk = SessionModel.exists(sessionId, key);
-        if (pk != -1) 
-        {
-            SessionModel session = SessionModel.read(pk);
-         
-            return extractValueFromSessions(session.getSessions(), key);
-        }
-        return null; // Session data not found
+
+        return SessionModel.read(key).getValue();
     }
-
-
-    
-    private String extractValueFromSessions(String sessions, String key) 
-    {
-        if (sessions != null) 
-        {
-            String[] keyValuePairs = sessions.split(",");
-
-            for (String pair : keyValuePairs) 
-            {
-                String[] parts = pair.split("=");
-
-                if (parts.length == 2 && parts[0].equals(key)) 
-                {
-                    return parts[1];
-                }
-            }
-        }
-        return null; 
-    }
-    
-    
     
     public String getSessionId() 
     {

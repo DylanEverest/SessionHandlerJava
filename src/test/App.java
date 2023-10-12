@@ -11,7 +11,6 @@ public class App
     {
         try
         {
-            SessionModel.deleteBySessionId("N6h91ZWkOi2AFmQCm-vPrw==");
         } 
         catch (Exception e) 
         {

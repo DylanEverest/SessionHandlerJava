@@ -1,0 +1,28 @@
+<project name="MyProject" basedir="." default="jar">
+
+    <property name="src.dir" value="src" />
+    <property name="bin.dir" value="bin" />
+    <property name="jar.dir" value="jar" />
+    <property name="jar.file" value="SessionEverest.jar" />
+
+    <target name="clean">
+        <delete dir="${bin.dir}" />
+        <delete dir="${jar.dir}" />
+    </target>
+
+    <target name="init">
+        <mkdir dir="${bin.dir}" />
+        <mkdir dir="${jar.dir}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" />
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.dir}/${jar.file}">
+            <fileset dir="${bin.dir}" includes="**/*.class" />
+        </jar>
+    </target>
+
+</project>

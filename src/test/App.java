@@ -1,6 +1,9 @@
 package test;
 
-// import databaseAccess.SessionModel;
+import java.io.PrintWriter;
+
+import databaseAccess.SessionModel;
+import session.SessionHandler;
 
 public class App 
 {
@@ -8,11 +11,7 @@ public class App
     {
         try
         {
-            // // SessionModel.create("adf","fsdf","56");
-
-            // // SessionModel.deleteBySessionId("sdjhasjdasjd");
-
-            // SessionModel.updateSessionData("adf","fsdf","520");
+            SessionModel.deleteBySessionId("N6h91ZWkOi2AFmQCm-vPrw==");
         } 
         catch (Exception e) 
         {

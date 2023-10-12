@@ -93,6 +93,57 @@ public class SessionModel {
         }
         return false;
     }
+    public static boolean updateSessionData(int pk ,String key, String valueToInsert) throws Exception {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+    
+        try 
+        {
+            PosgtreConnection posgtreConnection = new PosgtreConnection("clustering","postgre" , "", "jdbc:postgresql://localhost:5432/");
+            conn = posgtreConnection.connectToDataBase();
+            String sql = "UPDATE session SET sessions = array_to_string(array_append(string_to_array(sessions, ','), ?), ',') WHERE pk = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, key + "=" + valueToInsert);
+            stmt.setInt(2, pk);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close resources (stmt, conn)
+        }
+        return false;
+    }
+    
+
+    public static int exists(String sessionId, String key) throws Exception {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        int pk = -1; // Initialize with a default value
+    
+        try {
+            PosgtreConnection posgtreConnection = new PosgtreConnection("clustering", "postgre", "", "jdbc:postgresql://localhost:5432/");
+            conn = posgtreConnection.connectToDataBase();
+            String sql = "SELECT pk FROM session WHERE cryptedidsession = ? AND ? = ANY(string_to_array(sessions, ','))";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, sessionId);
+            stmt.setString(2, key);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                pk = rs.getInt("pk"); // Get the primary key value
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            stmt.close();
+            conn.close();
+        }
+        
+        return pk;
+    }
+    
+    
 
     public int getPk() {
         return pk;

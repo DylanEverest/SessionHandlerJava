@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cookie.CookieRetriever;
+import databaseAccess.SessionModel;
 import jakarta.servlet.http.Cookie;
 import requestHandler.RequestHolder;
 
@@ -44,10 +45,29 @@ public class SessionHandler {
         // 
     }
     
-    public void storeData(String key , Object value) 
+    public boolean storeData(String key, Object value) throws Exception
     {
-        data.put(key, value) ;
+        try 
+        {
+            String valueToInsert = value.toString();
+            // Check if the record exists
+            int pk = SessionModel.exists(sessionId, key) ;
+            if  (pk!=-1) 
+            {
+                SessionModel.updateSessionData( pk ,key, valueToInsert);
+            } 
+            else 
+            {
+                SessionModel.create(sessionId, key+"="+valueToInsert) ;
+            }
+            return false;            
+        } catch (Exception e) 
+        {
+            throw new Exception("Store tsy mety");
+        }
+
     }
+    
 
     public Object getData(String key)
     {

@@ -5,6 +5,9 @@ package session;
 import cookie.CookieRetriever;
 import databaseAccess.SessionModel;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import requestHandler.RequestHolder;
 
 public class SessionHandler {
@@ -36,12 +39,30 @@ public class SessionHandler {
     }
     
 
-    public void session_destroy()
-    {
-        // maka anle sessionId anle cookie anle olona
-
-        // 
+    public void session_destroy() {
+        // Retrieve the current request
+        HttpServletRequest request = RequestHolder.getRequest();
+    
+        // Create a session cookie with the same name as the session ID cookie
+        Cookie sessionCookie = new Cookie("sessionId", null);
+        
+        // Set the cookie to expire by setting its maxAge to 0 (or a negative value)
+        sessionCookie.setMaxAge(0);
+        
+        // Set the path to match the path of the original session cookie
+        sessionCookie.setPath("/");  // You may need to customize the path if it's different
+    
+        // Add the cookie to the response to delete it
+        HttpServletResponse response = RequestHolder.getResponse();
+        response.addCookie(sessionCookie);
+    
+        // Optionally, you can also invalidate the current session
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
     }
+    
     
     public boolean storeData(String key, Object value) throws Exception
     {
@@ -77,6 +98,8 @@ public class SessionHandler {
         }
         return null; // Session data not found
     }
+
+
     
     private String extractValueFromSessions(String sessions, String key) 
     {

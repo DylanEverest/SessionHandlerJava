@@ -46,7 +46,8 @@ public class SessionHandler {
         // Retrieve the session ID from the current session
         String sessionId = (String) request.getSession().getAttribute("sessionId");
         
-        if (sessionId != null) {
+        if (sessionId != null) 
+        {
             // Delete the session data from the database based on the session ID
             try {
                 SessionModel.deleteBySessionId(sessionId);
@@ -70,7 +71,8 @@ public class SessionHandler {
     
         // Optionally, you can also invalidate the current session
         HttpSession session = request.getSession(false);
-        if (session != null) {
+        if (session != null) 
+        {
             session.invalidate();
         }
     }

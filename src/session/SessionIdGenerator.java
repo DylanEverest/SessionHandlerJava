@@ -7,7 +7,8 @@ import java.util.UUID;
 public class SessionIdGenerator {
     private static SecureRandom random = new SecureRandom();
 
-    public static String generateSessionId() {
+    public static String generateSessionId() 
+    {
         // Create a random string of bytes
         byte[] randomBytes = new byte[16];
         random.nextBytes(randomBytes);

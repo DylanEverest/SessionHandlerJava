@@ -2,6 +2,7 @@ package requestHandler;
 
 import java.io.IOException;
 
+import databaseAccess.ConnectionHolder;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,6 +11,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.XMLParser.attribute.XMLObject;
 
 @WebFilter("/*")
 public class RequestFilter implements Filter {
@@ -28,8 +30,27 @@ public class RequestFilter implements Filter {
         }
 
         /*
-         * For the init
+         * For the database init
          */
+        String confXMLPath =request.getServletContext().getRealPath("/WEB-INF/database.xml");
+        try 
+        {
+
+            String database= XMLObject.createXMLObject(confXMLPath).getValueOfTheChildWithName("<database>") ;
+
+            String user =XMLObject.createXMLObject(confXMLPath).getValueOfTheChildWithName("<user>") ;
+
+            String password = XMLObject.createXMLObject(confXMLPath).getValueOfTheChildWithName("<password>") ;
+
+            String ipaddr = XMLObject.createXMLObject(confXMLPath).getValueOfTheChildWithName("<ipaddr>");
+
+            ConnectionHolder.setConnection(database, user, password, ipaddr);
+
+        }
+        catch (Exception e) 
+        {
+            throw new ServletException("A problem with database.xml");
+        }
 
         chain.doFilter(request, response);
     }

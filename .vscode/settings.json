@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/run/media/dylan/Windows/servlet-api.jar",
+        "/run/media/dylan/Windows/jakartaee-migration-1.0.0-shaded.jar"
+    ]
+}

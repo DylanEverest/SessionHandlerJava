@@ -4,6 +4,7 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "/run/media/dylan/Windows/servlet-api.jar",
-        "/run/media/dylan/Windows/jakartaee-migration-1.0.0-shaded.jar"
+        "/run/media/dylan/Windows/jakartaee-migration-1.0.0-shaded.jar",
+        "/run/media/dylan/Windows/postgresql-42.3.7.jar"
     ]
 }

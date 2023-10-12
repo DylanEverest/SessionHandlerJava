@@ -12,8 +12,11 @@ public class App
     {
         try
         {
-           String x= XMLObject.createXMLObject("/opt/apache-tomcat-10.1.13/webapps/TestSession/WEB-INF/database.xml").getValueOfTheChildWithName("<password>");
-           System.out.println("a:"+x);
+            XMLObject.createXMLObject("/opt/apache-tomcat-10.1.13/webapps/TestSession/WEB-INF/database.xml").getValueOfTheChildWithName("<password>");
+            XMLObject.createXMLObject("/opt/apache-tomcat-10.1.13/webapps/TestSession/WEB-INF/database.xml").getValueOfTheChildWithName("<database>");
+            XMLObject.createXMLObject("/opt/apache-tomcat-10.1.13/webapps/TestSession/WEB-INF/database.xml").getValueOfTheChildWithName("<user>");
+            XMLObject.createXMLObject("/opt/apache-tomcat-10.1.13/webapps/TestSession/WEB-INF/database.xml").getValueOfTheChildWithName("<ipaddr>");
+            
         } 
         catch (Exception e) 
         {

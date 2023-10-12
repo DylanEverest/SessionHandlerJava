@@ -1,7 +1,7 @@
 package databaseAccess;
 
 public class ConnectionHolder {
-    private static ThreadLocal<PosgtreConnection> connection;
+    private static ThreadLocal<PosgtreConnection> connection = new ThreadLocal<>();
 
     public static void setConnection(String database,String user , String passw, String ipaddr)
     {

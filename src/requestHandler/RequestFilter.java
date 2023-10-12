@@ -49,7 +49,7 @@ public class RequestFilter implements Filter {
         }
         catch (Exception e) 
         {
-            throw new ServletException("A problem with database.xml");
+            throw new ServletException(e.getMessage());
         }
 
         chain.doFilter(request, response);

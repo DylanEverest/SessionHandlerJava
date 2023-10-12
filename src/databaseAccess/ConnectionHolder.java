@@ -7,4 +7,8 @@ public class ConnectionHolder {
     {
         connection.set(new PosgtreConnection(database,user,passw,ipaddr));
     }
+    public static PosgtreConnection getConnection()
+    {
+        return connection.get();
+    }
 }

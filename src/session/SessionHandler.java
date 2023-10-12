@@ -3,6 +3,7 @@ package session;
 
 
 import cookie.CookieRetriever;
+import databaseAccess.ConnectionHolder;
 import databaseAccess.SessionModel;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +12,6 @@ import requestHandler.RequestHolder;
 
 public class SessionHandler {
 
-    
-    
     public static void session_start() {
         // Check if the session ID exists in the current cookie of the user
 
@@ -45,7 +44,7 @@ public class SessionHandler {
             // Delete the session data from the database based on the session ID
             try 
             {
-                SessionModel.deleteBySessionId(sessionId);
+                new SessionModel(ConnectionHolder.getConnection()).deleteBySessionId(sessionId);
             } 
             catch (Exception e) 
             {
@@ -61,6 +60,7 @@ public class SessionHandler {
          
         // Add the cookie to the response to delete it
         HttpServletResponse response = RequestHolder.getResponse();
+
         response.addCookie(sessionCookie);
     
  
@@ -71,7 +71,8 @@ public class SessionHandler {
     public static boolean storeData(String key, Object value) throws Exception
     {
         String sessionId = CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
-        if (sessionId == null) {
+        if (sessionId == null) 
+        {
             session_start();
             sessionId =CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
         }
@@ -79,11 +80,12 @@ public class SessionHandler {
         {
             String valueToInsert = value.toString();
             // Check if the record exists
-            
-            if  (!SessionModel.updateSessionData( sessionId ,key, valueToInsert)) 
+            SessionModel sessionModel = new SessionModel(ConnectionHolder.getConnection());
+            sessionModel.setKey(key);
+            sessionModel.setValue(valueToInsert);
+            if  (!sessionModel.updateSessionData()) 
             {
-                SessionModel x =SessionModel.create(sessionId ,key, valueToInsert) ;
-                return (x==null);
+                return sessionModel.create() ;
             } 
             return true;
 
@@ -98,7 +100,9 @@ public class SessionHandler {
     public String getData(String key) throws Exception 
     {
 
-        return SessionModel.read(key).getValue();
+        SessionModel s= new SessionModel(ConnectionHolder.getConnection());
+        s.setKey(key);
+        return s.read(key).getValue();
     }
     
     

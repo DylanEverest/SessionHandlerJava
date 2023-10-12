@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class SessionModel {
+    PosgtreConnection pg ;
     private int pk;
     private String cryptedIDSession;
     private String key;
@@ -16,19 +17,23 @@ public class SessionModel {
 
     // Constructors, getters, and setters
     // ...
+    public SessionModel(PosgtreConnection pg)
+    {
+        this.pg= pg;
+    }
 
-    public static SessionModel create(String cryptedIDSession, String key, String value) throws Exception {
+    public boolean create() throws Exception 
+    {
         Connection conn = null;
         PreparedStatement stmt = null;
-        SessionModel session = new SessionModel();
+        SessionModel session = new SessionModel(pg);
         session.setCryptedIDSession(cryptedIDSession);
         session.setKey(key);
         session.setValue(value);
 
         try 
         {
-            PosgtreConnection posgtreConnection = new PosgtreConnection("javasession","postgres" , "", "jdbc:postgresql://localhost:5432/");
-            conn = posgtreConnection.connectToDataBase();
+            conn = pg.connectToDataBase();
             String sql = "INSERT INTO sessions (cryptedsessionid,key ,value) VALUES (?, ?,?) RETURNING sessionsidpk";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, cryptedIDSession);
@@ -36,25 +41,32 @@ public class SessionModel {
             stmt.setString(3, value);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                session.setPk(rs.getInt("sessionsidpk"));
-                return session;
+            return rs.next();
+        } 
+        catch (SQLException e) 
+        {
+            return false;
+        } 
+        finally 
+        {
+            if (stmt != null) 
+            {
+                stmt.close();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
+            if (conn != null) 
+            {
+                conn.close();
+            }
         }
-        return null;
+
     }
 
-    public static SessionModel read(String key) throws Exception {
+    public SessionModel read(String key) throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
         try 
         {
-            PosgtreConnection posgtreConnection = new PosgtreConnection("javasession","postgres" , "", "jdbc:postgresql://localhost:5432/");
-            conn = posgtreConnection.connectToDataBase();
+            conn = pg.connectToDataBase();
             String sql = "SELECT * FROM sessions WHERE key = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, key);
@@ -63,7 +75,7 @@ public class SessionModel {
             if (rs.next()) 
             {
 
-                SessionModel session = new SessionModel();
+                SessionModel session = new SessionModel(pg);
                 session.setPk(rs.getInt("sessionsidpk"));
                 session.setCryptedIDSession(rs.getString("cryptedsessionid"));
                 session.setKey(rs.getString("key"));
@@ -75,17 +87,24 @@ public class SessionModel {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            if (stmt != null) 
+            {
+                stmt.close();
+            }
+            if (conn != null) 
+            {
+                conn.close();
+            }
          }
         return null;
     }
-    public static boolean deleteBySessionId(String sessionId) throws Exception {
+    public boolean deleteBySessionId(String sessionId) throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
     
         try 
         {
-            PosgtreConnection posgtreConnection = new PosgtreConnection("javasession","postgres" , "", "jdbc:postgresql://localhost:5432/");
-            conn = posgtreConnection.connectToDataBase();
+            conn = pg.connectToDataBase();
             String sql = "DELETE FROM sessions WHERE cryptedsessionid = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, sessionId);
@@ -113,25 +132,35 @@ public class SessionModel {
     
 
 
-    public static boolean updateSessionData(String cryptedsessionid ,String key, String valueToInsert) throws Exception {
+    public boolean updateSessionData() throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
     
         try 
         {
-            PosgtreConnection posgtreConnection = new PosgtreConnection("javasession","postgres" , "", "jdbc:postgresql://localhost:5432/");
-            conn = posgtreConnection.connectToDataBase();
+            conn = pg.connectToDataBase();
             String sql = "UPDATE sessions SET value = ?  WHERE cryptedsessionid = ? AND key= ? ";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, valueToInsert);
-            stmt.setString(2, cryptedsessionid);
+            stmt.setString(1, value);
+            stmt.setString(2, cryptedIDSession);
             stmt.setString(3, key);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e)
+        {
             e.printStackTrace();
-        } finally {
-            // Close resources (stmt, conn)
+        } 
+        finally
+        {
+            if (stmt != null) 
+            {
+                stmt.close();
+            }
+            if (conn != null) 
+            {
+                conn.close();
+            }
         }
         return false;
     }
@@ -181,6 +210,4 @@ public class SessionModel {
         this.value = value;
     }
 
-    // Additional methods, getters, setters, and other members
-    // ...
 }

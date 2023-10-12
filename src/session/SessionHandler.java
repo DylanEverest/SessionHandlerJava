@@ -42,9 +42,21 @@ public class SessionHandler {
     public void session_destroy() {
         // Retrieve the current request
         HttpServletRequest request = RequestHolder.getRequest();
+        
+        // Retrieve the session ID from the current session
+        String sessionId = (String) request.getSession().getAttribute("sessionId");
+        
+        if (sessionId != null) {
+            // Delete the session data from the database based on the session ID
+            try {
+                SessionModel.deleteBySessionId(sessionId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     
         // Create a session cookie with the same name as the session ID cookie
-        Cookie sessionCookie = new Cookie("sessionIdDylan", null);
+        Cookie sessionCookie = new Cookie("sessionId", null);
         
         // Set the cookie to expire by setting its maxAge to 0 (or a negative value)
         sessionCookie.setMaxAge(0);
@@ -62,6 +74,7 @@ public class SessionHandler {
             session.invalidate();
         }
     }
+    
     
     
     public boolean storeData(String key, Object value) throws Exception

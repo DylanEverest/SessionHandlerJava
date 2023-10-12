@@ -71,6 +71,32 @@ public class SessionModel {
         }
         return null;
     }
+    public static boolean deleteBySessionId(String sessionId) throws Exception {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+    
+        try {
+            PosgtreConnection posgtreConnection = new PosgtreConnection("clustering", "postgre", "", "jdbc:postgresql://localhost:5432/");
+            conn = posgtreConnection.connectToDataBase();
+            String sql = "DELETE FROM session WHERE cryptedIDSession = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, sessionId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close resources (stmt, conn)
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return false;
+    }
+    
 
     public boolean update() throws Exception {
         Connection conn = null;

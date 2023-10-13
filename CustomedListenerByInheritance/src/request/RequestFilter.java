@@ -15,6 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import session.SessionHolder;
+import session.SessionIdGenerator;
 import utils.XMLParser.attribute.XMLObject;
 
 @WebFilter("/*")
@@ -30,7 +31,7 @@ public class RequestFilter implements Filter {
         /*
          * hold the session
          */
-        setSession(((HttpServletRequest) request).getCookies());
+        setSession(((HttpServletRequest) request));
 
         /*
             initialize the session
@@ -63,17 +64,26 @@ public class RequestFilter implements Filter {
             return false;
         }
     }
-    public void setSession(Cookie[] cookies)
+    public void setSession(HttpServletRequest request)
     {
+        Cookie [] cookies = request.getCookies();
         String value="";
-        for (Cookie cookie : cookies)
-        {
-            if (cookie.getName().equals("JSESSIONID")) 
+        try{
+            for (Cookie cookie : cookies)
             {
-                value= cookie.getValue();
-                break;
+                if (cookie.getName().equals("JSESSIONID")) 
+                {
+                    value= cookie.getValue();
+                    break;
+                }
             }
         }
+        catch(Exception e)
+        {
+
+            value = SessionIdGenerator.generateSessionId();
+        }
+
         SessionHolder.setSessionValue(value);
 
     }

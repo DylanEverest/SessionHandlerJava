@@ -32,24 +32,15 @@ public class SessionHandler {
     }
     
 
-    public static void session_destroy() {
-        // Retrieve the current request
-        HttpServletRequest request = RequestHolder.getRequest();
-        
+    public static void session_destroy() throws Exception{
+        // Retrieve the current request        
         // Retrieve the session ID from the current session
-        String sessionId = (String) request.getSession().getAttribute("sessionIdDylan");
+        String sessionId = CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest());
         
         if (sessionId != null) 
         {
             // Delete the session data from the database based on the session ID
-            try 
-            {
                 new SessionModel(ConnectionHolder.getConnection()).deleteBySessionId(sessionId);
-            } 
-            catch (Exception e) 
-            {
-                e.printStackTrace();
-            }
         }
     
         // Create a session cookie with the same name as the session ID cookie
@@ -81,6 +72,7 @@ public class SessionHandler {
             String valueToInsert = value.toString();
             // Check if the record exists
             SessionModel sessionModel = new SessionModel(ConnectionHolder.getConnection());
+            sessionModel.setCryptedIDSession(sessionId);
             sessionModel.setKey(key);
             sessionModel.setValue(valueToInsert);
             if  (!sessionModel.updateSessionData()) 

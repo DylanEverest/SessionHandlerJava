@@ -93,7 +93,8 @@ public class SessionHandler {
 
         SessionModel s= new SessionModel(ConnectionHolder.getConnection());
         s.setKey(key);
-        return s.read(key).getValue();
+        s.setCryptedIDSession(CookieRetriever.retrieveSessionIdFromCookie(RequestHolder.getRequest()));
+        return s.read().getValue();
     }
     
     

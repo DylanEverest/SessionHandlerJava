@@ -61,15 +61,16 @@ public class SessionModel {
 
     }
 
-    public SessionModel read(String key) throws Exception {
+    public SessionModel read() throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
         try 
         {
             conn = pg.connectToDataBase();
-            String sql = "SELECT * FROM sessions WHERE key = ?";
+            String sql = "SELECT * FROM sessions WHERE key = ? and cryptedsessionid = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, key);
+            stmt.setString(2, cryptedIDSession);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) 

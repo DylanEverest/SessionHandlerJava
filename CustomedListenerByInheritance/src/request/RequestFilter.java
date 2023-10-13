@@ -60,7 +60,8 @@ public class RequestFilter implements Filter {
     public void setSession(Cookie[] cookies)
     {
         String value="";
-        for (Cookie cookie : cookies) {
+        for (Cookie cookie : cookies)
+        {
             if (cookie.getName().equals("JSESSIONID")) 
             {
                 value= cookie.getValue();

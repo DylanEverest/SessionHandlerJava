@@ -6,7 +6,6 @@ import cookie.CookieRetriever;
 import databaseAccess.ConnectionHolder;
 import databaseAccess.SessionModel;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import requestHandler.RequestHolder;
 

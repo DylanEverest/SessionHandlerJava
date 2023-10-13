@@ -3,7 +3,8 @@ package request;
 import java.io.IOException;
 
 import databaseAccess.ConnectionHolder;
-
+import databaseAccess.PosgtreConnection;
+import databaseAccess.SessionModel;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import session.SessionHolder;
 import utils.XMLParser.attribute.XMLObject;
 
@@ -26,10 +28,14 @@ public class RequestFilter implements Filter {
          */
         setDatabase(request);
         /*
-         * For the session
+         * hold the session
          */
         setSession(((HttpServletRequest) request).getCookies());
 
+        /*
+            initialize the session
+        */        
+        initializeSessionContent((HttpServletRequest) request) ;
 
         chain.doFilter(request, response);
     }
@@ -72,6 +78,32 @@ public class RequestFilter implements Filter {
 
     }
 
-    // public void 
+    public void initializeSessionContent(HttpServletRequest httpServletRequest)
+    {
+        PosgtreConnection pg = ConnectionHolder.getConnection() ;
+
+        HttpSession session = httpServletRequest.getSession() ;
+
+        SessionModel model = new SessionModel(pg);
+        
+        model.setCryptedIDSession(SessionHolder.getSessionValue());
+
+        try 
+        {
+            SessionModel[] allMatched= model.getAllBySessionID();
+            
+            for (SessionModel sessionModel : allMatched) 
+            {
+                session.setAttribute(sessionModel.getKey() ,sessionModel.getValue());
+            }
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+
+
+        
+    }
 
 }

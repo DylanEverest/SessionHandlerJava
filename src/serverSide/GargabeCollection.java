@@ -6,7 +6,8 @@ import java.sql.PreparedStatement;
 import databaseAccess.PosgtreConnection;
 
 public class GargabeCollection {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception 
+    {
         PosgtreConnection pg = new PosgtreConnection("javasession","postgres","","jdbc:postgresql://localhost:5432/");
 
         Connection c = pg.connectToDataBase() ;
@@ -17,6 +18,6 @@ public class GargabeCollection {
         PreparedStatement preparedStatement = c.prepareStatement(deleteSQL);
     
         // Exécuter la suppression
-        int rowsAffected = preparedStatement.executeUpdate();   
+        preparedStatement.executeUpdate();   
     }
 }

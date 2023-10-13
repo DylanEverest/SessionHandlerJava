@@ -98,7 +98,7 @@ public class SessionModel {
          }
         return null;
     }
-    public boolean deleteBySessionId(String sessionId) throws Exception {
+    public boolean deleteBySessionId() throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
     
@@ -107,7 +107,7 @@ public class SessionModel {
             conn = pg.connectToDataBase();
             String sql = "DELETE FROM sessions WHERE cryptedsessionid = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, sessionId);
+            stmt.setString(1, cryptedIDSession);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } 

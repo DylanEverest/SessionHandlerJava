@@ -36,6 +36,14 @@ public class SessionListener implements HttpSessionBindingListener{
         /*
          * Remove session from database
          */
+        try 
+        {
+            getModel(event).deleteBySessionId() ;
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
     }
 
         

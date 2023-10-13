@@ -10,8 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import session.SessionHolder;
 import utils.XMLParser.attribute.XMLObject;
 
 @WebFilter("/*")
@@ -23,6 +24,18 @@ public class RequestFilter implements Filter {
        /*
          * For the database init
          */
+        setDatabase(request);
+        /*
+         * For the session
+         */
+        setSession(((HttpServletRequest) request).getCookies());
+
+
+        chain.doFilter(request, response);
+    }
+
+    public boolean setDatabase(ServletRequest request)
+    {
         String confXMLPath =request.getServletContext().getRealPath("/WEB-INF/database.xml");
         try 
         {
@@ -37,18 +50,25 @@ public class RequestFilter implements Filter {
 
             ConnectionHolder.setConnection(database, user, password, ipaddr);
 
+            return true;
         }
         catch (Exception e) 
         {
-            throw new ServletException(e.getMessage());
+            return false;
         }
-        /*
-         * For the session
-         */
-        HttpServletRequest request1 = (HttpServletRequest) request;
-        
+    }
+    public void setSession(Cookie[] cookies)
+    {
+        String value="";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("JSESSIONID")) 
+            {
+                value= cookie.getValue();
+                break;
+            }
+        }
+        SessionHolder.setSessionValue(value);
 
-        chain.doFilter(request, response);
     }
 
 }

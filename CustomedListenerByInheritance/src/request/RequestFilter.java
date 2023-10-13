@@ -13,6 +13,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import session.SessionHolder;
 import session.SessionIdGenerator;
@@ -31,7 +32,7 @@ public class RequestFilter implements Filter {
         /*
          * hold the session
          */
-        setSession(((HttpServletRequest) request));
+        setSession(((HttpServletRequest) request) ,(HttpServletResponse) response);
 
         /*
             initialize the session
@@ -64,7 +65,7 @@ public class RequestFilter implements Filter {
             return false;
         }
     }
-    public void setSession(HttpServletRequest request)
+    public void setSession(HttpServletRequest request ,HttpServletResponse response)
     {
         Cookie [] cookies = request.getCookies();
         String value="";
@@ -82,6 +83,7 @@ public class RequestFilter implements Filter {
         {
 
             value = SessionIdGenerator.generateSessionId();
+            response.addCookie(new Cookie("JSESSIONID", value)) ;
         }
 
         SessionHolder.setSessionValue(value);

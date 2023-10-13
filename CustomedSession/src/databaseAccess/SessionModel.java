@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class SessionModel {
     PosgtreConnection pg ;
@@ -99,6 +100,53 @@ public class SessionModel {
          }
         return null;
     }
+
+    public SessionModel [] getAllBySessionID() throws Exception 
+    {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try 
+        {
+            conn = pg.connectToDataBase();
+            String sql = "SELECT * FROM sessions WHERE cryptedsessionid = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, key);
+            stmt.setString(2, cryptedIDSession);
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<SessionModel> list = new ArrayList<SessionModel>();
+            while (rs.next()) 
+            {
+
+                SessionModel session = new SessionModel(pg);
+                session.setPk(rs.getInt("sessionsidpk"));
+                session.setCryptedIDSession(rs.getString("cryptedsessionid"));
+                session.setKey(rs.getString("key"));
+                session.setValue(rs.getString("value"));
+                session.setDateb(rs.getTimestamp("dateb"));
+                list.add(session);
+
+            }
+            return list.toArray(new SessionModel[list.size()]);
+
+        } 
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+        }
+        finally 
+        {
+            if (stmt != null) 
+            {
+                stmt.close();
+            }
+            if (conn != null) 
+            {
+                conn.close();
+            }
+         }
+        return null;   
+    }
+
     public boolean deleteBySessionId(String sessionId) throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
